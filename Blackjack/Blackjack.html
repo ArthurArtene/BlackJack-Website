@@ -1,0 +1,379 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>BlackJack</title>
+    <link rel="stylesheet" type="text/css" href="Blackjack.css" />
+ 
+</head>
+
+<body id="body" sstyle="overflow:auto">
+    <div id="Header">
+        <h1><img src="unnamed.png" style="height:60px;margin-left:15%;" />BLACKJACK<img src="unnamed.png" style="height:60px;margin-right:15%;" /></h1>
+    </div>
+    <div style="float: left;margin-top:1%;margin-left:1%;padding:1%">
+        <button class="button button1" onclick="getNewCard(0, ROUND); rounds(0)">Hit</button>
+        <button class="button button1" onclick="hold(0),holding()">Hold</button>
+        <button class="button button1" onclick="quit(0)">Quit</button>
+    </div>
+    <div style="float:right;margin-top:1%;padding:1%;margin-right:1%">
+ 
+        <button class="button button1" onclick="getNewCard(2, ROUND); rounds(1)">Hit</button>
+        <button class="button button1" onclick="hold(2), holding()">Hold</button>
+        <button class="button button1" onclick="quit(2)">Quit</button>
+
+    </div>
+    <div style="margin-left:46%">
+        <button onclick="start()" class="button button1">Start Game</button>
+
+    </div>
+    
+
+    <table style="text-align: center;color: black;margin-left: 25%;width: 50%;height:auto;z-index:1;position:absolute" id="play_area">
+        <tr style="background-color:white">
+            <th>Player 1</th>
+            <th>Dealer</th>
+            <th>Player 2</th>
+        </tr>
+        <tr style="height:auto;overflow:auto">
+            <td style="width:333px;height:auto;" id="player_0">
+                <div style="margin-left: 50%;width: 10%">
+
+                </div>
+            </td>
+            <td style="width: 333px;height: auto;margin-right: 25%;position:initial" id="player_1">
+                <div style="width: 10%">
+
+                </div>
+            </td>
+            <td style="width: 333px;height: auto" id="player_2">
+                <div style="margin-right: 30%;width: 10%">
+
+                </div>
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>
+<script>
+    var BEGIN = -2;
+    var in_PROG = -1;
+    var END = 0;
+    var WIN = 0;
+    var LOSS = 0;
+    var HOLD = 0;
+    var BLACKJACK = 21;
+    var total_0 = 0;    //player 1 total
+    var total_1 = 0;    //Dealer total
+    var total_2 = 0;    //player 2 total
+    var player = 0;
+    var cardValues = [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
+    var cardChecker = new Array(52);
+    var imgArray = new Array(52);
+
+    
+    function generateImageArray() {
+	//Ace
+    imgArray[0] = new Image();
+    imgArray[0].src = 'Cards/AH.png';
+    imgArray[1] = new Image();
+    imgArray[1].src = 'Cards/AD.png';
+    imgArray[2] = new Image();
+    imgArray[2].src = 'Cards/AC.png';
+    imgArray[3] = new Image();
+    imgArray[3].src = 'Cards/AS.png';
+	//2
+	imgArray[4] = new Image();
+    imgArray[4].src = 'Cards/2H.png';
+    imgArray[5] = new Image();
+    imgArray[5].src = 'Cards/2D.png';
+    imgArray[6] = new Image();
+    imgArray[6].src = 'Cards/2C.png';
+    imgArray[7] = new Image();
+    imgArray[7].src = 'Cards/2S.png';
+	//3
+	imgArray[8] = new Image();
+    imgArray[8].src = 'Cards/3H.png';
+    imgArray[9] = new Image();
+    imgArray[9].src = 'Cards/3D.png';
+    imgArray[10] = new Image();
+    imgArray[10].src = 'Cards/3C.png';
+    imgArray[11] = new Image();
+    imgArray[11].src = 'Cards/3S.png';
+	//4
+	imgArray[12] = new Image();
+    imgArray[12].src = 'Cards/4H.png';
+    imgArray[13] = new Image();
+    imgArray[13].src = 'Cards/4D.png';
+    imgArray[14] = new Image();
+    imgArray[14].src = 'Cards/4C.png';
+    imgArray[15] = new Image();
+    imgArray[15].src = 'Cards/4S.png';
+	//5
+	imgArray[16] = new Image();
+    imgArray[16].src = 'Cards/5H.png';
+    imgArray[17] = new Image();
+    imgArray[17].src = 'Cards/5D.png';
+    imgArray[18] = new Image();
+    imgArray[18].src = 'Cards/5C.png';
+    imgArray[19] = new Image();
+    imgArray[19].src = 'Cards/5S.png';
+	//6
+	imgArray[20] = new Image();
+    imgArray[20].src = 'Cards/6H.png';
+    imgArray[21] = new Image();
+    imgArray[21].src = 'Cards/6D.png';
+    imgArray[22] = new Image();
+    imgArray[22].src = 'Cards/6C.png';
+    imgArray[23] = new Image();
+    imgArray[23].src = 'Cards/6S.png';
+	//7
+	imgArray[24] = new Image();
+    imgArray[24].src = 'Cards/7H.png';
+    imgArray[25] = new Image();
+    imgArray[25].src = 'Cards/7D.png';
+    imgArray[26] = new Image();
+    imgArray[26].src = 'Cards/7C.png';
+    imgArray[27] = new Image();
+    imgArray[27].src = 'Cards/7S.png';
+	//8
+	imgArray[28] = new Image();
+    imgArray[28].src = 'Cards/8H.png';
+    imgArray[29] = new Image();
+    imgArray[29].src = 'Cards/8D.png';
+    imgArray[30] = new Image();
+    imgArray[30].src = 'Cards/8C.png';
+    imgArray[31] = new Image();
+    imgArray[31].src = 'Cards/8S.png';
+	//9
+	imgArray[32] = new Image();
+    imgArray[32].src = 'Cards/9H.png';
+    imgArray[33] = new Image();
+    imgArray[33].src = 'Cards/9D.png';
+    imgArray[34] = new Image();
+    imgArray[34].src = 'Cards/9C.png';
+    imgArray[35] = new Image();
+    imgArray[35].src = 'Cards/9S.png';
+	//10
+	imgArray[36] = new Image();
+    imgArray[36].src = 'Cards/10H.png';
+    imgArray[37] = new Image();
+    imgArray[37].src = 'Cards/10D.png';
+    imgArray[38] = new Image();
+    imgArray[38].src = 'Cards/10C.png';
+    imgArray[39] = new Image();
+    imgArray[39].src = 'Cards/10S.png';
+	//Jack
+	imgArray[40] = new Image();
+    imgArray[40].src = 'Cards/JH.png';
+    imgArray[41] = new Image();
+    imgArray[41].src = 'Cards/JD.png';
+    imgArray[42] = new Image();
+    imgArray[42].src = 'Cards/JC.png';
+    imgArray[43] = new Image();
+    imgArray[43].src = 'Cards/JS.png';
+	//Queen
+	imgArray[44] = new Image();
+    imgArray[44].src = 'Cards/QH.png';
+    imgArray[45] = new Image();
+    imgArray[45].src = 'Cards/QD.png';
+    imgArray[46] = new Image();
+    imgArray[46].src = 'Cards/QC.png';
+    imgArray[47] = new Image();
+    imgArray[47].src = 'Cards/QS.png';
+	//King
+	imgArray[48] = new Image();
+    imgArray[48].src = 'Cards/KH.png';
+    imgArray[49] = new Image();
+    imgArray[49].src = 'Cards/KD.png';
+    imgArray[50] = new Image();
+    imgArray[50].src = 'Cards/KC.png';
+    imgArray[51] = new Image();
+    imgArray[51].src = 'Cards/KS.png';
+    }
+
+    function updateScore(player,x) {
+        if (player == 0) {   //player 1
+            total_0 = total_0 + cardValues[x];
+        }
+        if (player == 1) {   //dealer
+            total_1 = total_1 + cardValues[x];
+        }
+        if (player == 2) {   //player 2
+            total_2 = total_2 + cardValues[x];
+        }   
+        
+    }
+    function checkLossOrWin() {
+        if (total_0 > BLACKJACK) {
+            LOSS = 1;
+            END = 1;
+        }if (total_1 > BLACKJACK) {
+            LOSS = 2;
+            END = 1;
+        }
+        if (total_2 > BLACKJACK) {
+            LOSS = 3;
+            END = 1;
+        }
+        if (total_0 == BLACKJACK) {
+            WIN = 1;
+            END = 1;
+        } if (total_1 == BLACKJACK) {
+            WIN = 2;
+            END = 1;
+        }
+        if (total_2 == BLACKJACK) {
+            WIN = 3;
+            END = 1;
+        }
+    }
+    function clearArea() {
+        document.getElementById('player_0').innerHTML = "";
+        document.getElementById('player_1').innerHTML = "";
+        document.getElementById('player_2').innerHTML = "";
+        total_0 = 0;
+        total_1 = 0;
+        total_2 = 0;
+        LOSS = 0;
+        WIN = 0;
+        in_PROG = -1;
+        BEGIN = -2
+        END = 0;
+        ROUND = 0;
+        HOLD = 0;
+    }
+    function quit(player) {
+        if (player == 0) {
+            window.alert("Player 1 Quit!!");
+        }
+        if (player == 2) {
+            window.alert("Player 2 Quit!!");
+        }
+        END = 1;
+        clearArea();
+    }
+    function hold(player) {
+        if (in_PROG == -1) {
+            if (player == 0) {
+                window.alert("Player 1 is holding!!");
+                
+            }
+            if (player == 2) {
+                window.alert("Player 2 is holding!!");
+            }
+        } else window.alert("GAME OVER! Press quit to restart game.");
+    }
+    function printResult() {
+        if (LOSS == 1) {
+            window.alert("Player 1 Lost. Press Quit to restart");
+            in_PROG = 1;
+         
+        }
+        if (LOSS == 2) {
+            window.alert("Dealer Lost. Press Quit to restart");
+            in_PROG = 1;
+       
+        }
+        if (LOSS == 3) {
+            window.alert("Player 2 Lost. Press Quit to restart");
+            in_PROG = 1;
+            
+        }
+        if (WIN == 1) {
+            window.alert("Player 1 wins with a perfect 21. Press Quit to restart");
+            in_PROG = 1;
+           
+        }
+
+        if (WIN == 2) {
+            window.alert("Dealer wins with a perfect 21. Press Quit to restart");
+            in_PROG = 1;
+          
+        }
+        if (WIN == 3) {
+            window.alert("Player 2 wins with a perfect 21. Press Quit to restart");
+            in_PROG = 1;
+          
+        }
+    }
+    function printCard(player, x) {
+        console.log("printCard");
+        var id = "player_" + player;
+        console.log(id);
+        var element = document.getElementById(id);
+        let img = document.createElement('img');
+        img = imgArray[x];
+        img.style = "width:100px;padding:3%;padding-right:5%;margin-left:5%;";
+        element.appendChild(img);
+    }
+    function getNewCard(player, ROUND) {
+        checkHold();
+        if (in_PROG == -1) {
+            console.log("getNewCard");
+            console.log('ROUND = ' + ROUND);
+            //if (ROUND == player) {
+            
+                let x = Math.floor(Math.random() * 51);
+                if (cardChecker[x] == 0) {
+                    printCard(player, x)
+                    updateScore(player, x);
+                    cardChecker[x] = 1;
+                    console.log('freq = ' + cardChecker[x] + ' for ' + x);
+                    checkLossOrWin();
+                    printResult();
+                    
+                   
+                } else getNewCard(player);
+           //} else {
+           //     window.alert("Not ur turn lol");
+           //}
+        } else {
+            window.alert("GAME OVER! Press quit to restart game.");
+    }
+
+    }
+    function holding() {
+        HOLD = HOLD + 1;
+    }
+    function checkHold() {
+        if (HOLD == 2) {
+            if (total_0 > total_1) {
+                window.alert("Both players held, player 1 wins");
+                in_PROG = 1;
+                WIN = 1;
+            }
+            if (total_1 > total_0) {
+                window.alert("Both players held, player 2 wins");
+                in_PROG = 1;
+                WIN = 3;
+            }
+
+        }
+    }
+    function start() {
+        clearArea();
+        var ROUND = 0;
+        console.log('total0 ' + total_0);
+        console.log('total1 ' + total_1);
+        console.log('total2 ' + total_2);
+        console.log("Start");
+        generateImageArray();
+        for (let i = 0; i <= 52; ++i) {
+            cardChecker[i] = 0;  
+        }
+        while (BEGIN < 0 && END == 0) {
+            console.log('BEGIN');
+            getNewCard(0, ROUND);
+            console.log('total0 ' + total_0);
+            getNewCard(1, ROUND);
+            console.log('total1 ' + total_1);
+            getNewCard(2, ROUND);
+            console.log('total2 ' + total_2);
+            BEGIN++;
+        }
+        
+    }
+</script>
